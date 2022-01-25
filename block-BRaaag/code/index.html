@@ -1,0 +1,91 @@
+
+  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 class="hero-heading">My Movie Watch List</h1>
+    <div class="container">
+        <input type="text" name="name" id="name" placeholder="Enter movie name" autocomplete="off">
+        <ul class="root">
+           
+        </ul>
+    </div>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+let input = document.getElementById('name');
+let ul = document.querySelector('.root');
+
+let moviesArr = localStorage.getItem('moviesArr') ? JSON.parse(localStorage.getItem('moviesArr')) : [];
+
+// let moviesArr = [];
+
+input.addEventListener('keyup', (event) => {
+    if(event.keyCode === 13) {
+        moviesArr.push({
+            name: event.target.value,
+            watched: false,
+        });
+        event.target.value = '';
+        handleUI(moviesArr, ul);
+        localStorage.setItem('moviesArr', JSON.stringify(moviesArr));
+    }
+})
+
+function handleChange(event) {
+    let id = event.target.id;
+    moviesArr[id].watched = !moviesArr[id].watched;
+    handleUI(moviesArr, ul);
+        localStorage.setItem('moviesArr', JSON.stringify(moviesArr));
+}
+
+function elm(type, attr={}, ...children) {
+    let element = document.createElement(type);
+    for(let key in attr) {
+        if(key,startsWith('data-')) {
+            element.setAttribute(key, attr[key]);
+        } else {
+            element[key] = attr[key];
+        }
+    }
+    children.forEach((child) => {
+        if (typeof child === 'object') {
+            element.append(child);
+        }
+        if(typeof child === 'string') {
+            let node = document.createTextNode(child);
+            element.append(child);
+        }
+    })
+    return element;
+}
+
+function handleUI(data, root) {
+   let movieData = data.map((movie, i) => {
+    //    let li = React.createElement('li', {}, movie.name, React.createElement('button', {
+    //        id: i,
+    //        onClick: handleChange
+    //    }, movie.watched ? 'watched' : 'To Watched'));
+        // ul.append(li);
+        return (
+            <li key={i} data-id={i}>{movie.name} <button onClick={handleChange} id={i}>{movie.watched ? 'watched' : 'To Watched'}</button></li>
+   );
+    });
+    ReactDOM.render(movieData, ul);
+}
+
+handleUI(moviesArr, ul);
+    </script>
+</body>
+</html>
